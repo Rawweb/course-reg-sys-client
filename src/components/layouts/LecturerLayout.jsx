@@ -1,6 +1,8 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { LogOut, LayoutDashboard, ClipboardCheck } from 'lucide-react';
+import { LogOut, LayoutDashboard, ClipboardCheck, Settings } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import LiveDateTime from '../LiveDateTime';
+import Avatar from '../Avatar';
 
 const LecturerLayout = () => {
   const { user, logout } = useAuth();
@@ -14,6 +16,7 @@ const LecturerLayout = () => {
   const navLinks = [
     { label: 'Dashboard', path: '/lecturer/dashboard', icon: LayoutDashboard },
     { label: 'Pending Registrations', path: '/lecturer/registrations', icon: ClipboardCheck },
+    { label: 'Profile Settings', path: '/lecturer/profile', icon: Settings },
   ];
 
   return (
@@ -40,6 +43,16 @@ const LecturerLayout = () => {
             </Link>
           ))}
         </nav>
+
+        <div className='p-4 border-t border-border'>
+          <button
+            onClick={handleLogout}
+            className='flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-danger hover:bg-red-50 transition-colors w-full'
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
       </aside>
 
       <div className='flex-1 flex flex-col'>
@@ -48,14 +61,8 @@ const LecturerLayout = () => {
             <p className='text-sm text-text-muted'>Lecturer Panel</p>
           </div>
           <div className='flex items-center gap-4'>
-            <span className='text-sm font-medium text-text-heading'>{user?.fullName}</span>
-            <button
-              onClick={handleLogout}
-              className='flex items-center gap-2 text-sm text-danger hover:underline'
-            >
-              <LogOut size={16} />
-              Logout
-            </button>
+            <LiveDateTime />
+            <Avatar name={user?.fullName} />
           </div>
         </header>
 

@@ -1,6 +1,15 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { LogOut, LayoutDashboard, BookOpen, ClipboardList, GraduationCap } from 'lucide-react';
+import {
+  LogOut,
+  LayoutDashboard,
+  BookOpen,
+  ClipboardList,
+  GraduationCap,
+  Settings,
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import LiveDateTime from '../LiveDateTime';
+import Avatar from '../Avatar';
 
 const StudentLayout = () => {
   const { user, logout } = useAuth();
@@ -11,12 +20,12 @@ const StudentLayout = () => {
     navigate('/login');
   };
 
-  // Each nav link: label, path, and icon
   const navLinks = [
     { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
     { label: 'Available Courses', path: '/student/courses', icon: BookOpen },
     { label: 'My Registration', path: '/student/registration', icon: ClipboardList },
     { label: 'My Results', path: '/student/results', icon: GraduationCap },
+    { label: 'Profile Settings', path: '/student/profile', icon: Settings },
   ];
 
   return (
@@ -44,6 +53,17 @@ const StudentLayout = () => {
             </Link>
           ))}
         </nav>
+
+        {/* Logout — anchored at the bottom of the sidebar */}
+        <div className='p-4 border-t border-border'>
+          <button
+            onClick={handleLogout}
+            className='flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-danger hover:bg-red-50 transition-colors w-full'
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
       </aside>
 
       {/* Main content area */}
@@ -56,14 +76,8 @@ const StudentLayout = () => {
             </p>
           </div>
           <div className='flex items-center gap-4'>
-            <span className='text-sm font-medium text-text-heading'>{user?.fullName}</span>
-            <button
-              onClick={handleLogout}
-              className='flex items-center gap-2 text-sm text-danger hover:underline'
-            >
-              <LogOut size={16} />
-              Logout
-            </button>
+            <LiveDateTime />
+            <Avatar name={user?.fullName} />
           </div>
         </header>
 

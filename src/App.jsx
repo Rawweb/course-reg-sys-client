@@ -25,6 +25,8 @@ import AdminDepartments from './pages/admin/AdminDepartments';
 import AdminCourses from './pages/admin/AdminCourses';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminResults from './pages/admin/AdminResults';
+import MyResults from './pages/student/MyResults';
+import ProfileSettings from './pages/auth/ProfileSettings';
 
 function App() {
   return (
@@ -61,6 +63,8 @@ function App() {
         <Route path='/student/dashboard' element={<StudentDashboard />} />
         <Route path='/student/courses' element={<AvailableCourses />} />
         <Route path='/student/registration' element={<MyRegistration />} />
+        <Route path='/student/results' element={<MyResults />} />
+        <Route path='/student/profile' element={<ProfileSettings />} />
       </Route>
 
       {/* lecturer routes */}
@@ -75,6 +79,7 @@ function App() {
       >
         <Route path='/lecturer/dashboard' element={<LecturerDashboard />} />
         <Route path='/lecturer/registrations' element={<PendingRegistrations />} />
+        <Route path='/lecturer/profile' element={<ProfileSettings />} />
       </Route>
 
       {/* admin routes */}
@@ -92,6 +97,7 @@ function App() {
         <Route path='/admin/courses' element={<AdminCourses />} />
         <Route path='/admin/users' element={<AdminUsers />} />
         <Route path='/admin/results' element={<AdminResults />} />
+        <Route path='/admin/profile' element={<ProfileSettings />} />
       </Route>
 
       <Route path='*' element={<NotFound />} />
