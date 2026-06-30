@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { getCourses, createCourse, updateCourse, deactivateCourse } from '../../api/courseApi';
 import { getDepartments } from '../../api/departmentApi';
 import ConfirmModal from '../../components/ConfirmModal';
+import Skeleton, { PageHeaderSkeleton, TableSkeleton } from '../../components/Skeleton';
 
 const LEVELS = [100, 200, 300, 400, 500];
 const SEMESTERS = ['first', 'second'];
@@ -77,7 +78,19 @@ const AdminCourses = () => {
     }
   };
 
-  if (isLoading) return <p className='text-text-muted'>Loading courses...</p>;
+  if (isLoading) {
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton withAction />
+        <div className='flex gap-3'>
+          <Skeleton className='h-10 w-40 rounded-lg' />
+          <Skeleton className='h-10 w-32 rounded-lg' />
+          <Skeleton className='h-10 w-36 rounded-lg' />
+        </div>
+        <TableSkeleton columns={7} rows={6} />
+      </div>
+    );
+  }
   if (isError) return <p className='text-danger'>Failed to load courses.</p>;
 
   return (
@@ -226,7 +239,7 @@ const CourseModal = ({ course, departments, onClose, onSave, isSaving }) => {
   // so the prerequisite checklist only shows relevant options.
   // This re-fetches automatically whenever formValues.department changes,
   // because it's part of the query key.
-  const { data: departmentCourses } = useQuery({
+  const { data: departmentCourses, isLoading: departmentCoursesLoading } = useQuery({
     queryKey: ['courses', 'for-prerequisites', formValues.department],
     queryFn: () => getCourses({ department: formValues.department }),
     enabled: Boolean(formValues.department), // don't fetch until a department is picked
@@ -369,7 +382,14 @@ const CourseModal = ({ course, departments, onClose, onSave, isSaving }) => {
                 Prerequisites (same department only)
               </label>
               <div className='border border-border rounded-lg p-2 max-h-32 overflow-y-auto space-y-1'>
-                {availablePrereqs.length === 0 ? (
+                {departmentCoursesLoading ? (
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className='flex items-center gap-2 px-1 py-0.5'>
+                      <Skeleton className='h-3.5 w-3.5 rounded' />
+                      <Skeleton className='h-4 w-48' />
+                    </div>
+                  ))
+                ) : availablePrereqs.length === 0 ? (
                   <p className='text-xs text-text-muted px-1'>
                     No other courses in this department yet.
                   </p>

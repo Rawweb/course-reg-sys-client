@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { getAllRegistrations, reviewRegistration } from '../../api/registrationApi';
+import Skeleton, { PageHeaderSkeleton } from '../../components/Skeleton';
 
 const PendingRegistrations = () => {
   const queryClient = useQueryClient();
@@ -48,7 +49,36 @@ const PendingRegistrations = () => {
   };
 
   if (isLoading) {
-    return <p className='text-text-muted'>Loading pending registrations...</p>;
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton />
+        <div className='space-y-4'>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className='card'>
+              <div className='flex items-center justify-between mb-3'>
+                <div className='space-y-2'>
+                  <Skeleton className='h-5 w-40' />
+                  <Skeleton className='h-4 w-56' />
+                </div>
+                <Skeleton className='h-5 w-16' />
+              </div>
+              <div className='border-t border-border pt-3 mb-4'>
+                <Skeleton className='h-3 w-28 mb-3' />
+                <div className='flex flex-wrap gap-2'>
+                  {Array.from({ length: 5 }).map((__, pillIndex) => (
+                    <Skeleton key={pillIndex} className='h-7 w-16 rounded-full' />
+                  ))}
+                </div>
+              </div>
+              <div className='flex gap-3'>
+                <Skeleton className='h-10 w-24 rounded-lg' />
+                <Skeleton className='h-10 w-20 rounded-lg' />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (isError) {

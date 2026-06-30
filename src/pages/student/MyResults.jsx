@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getMyResults } from '../../api/resultApi';
+import { PageHeaderSkeleton, TableSkeleton } from '../../components/Skeleton';
 
 // Maps each grade to a badge-like color treatment —
 // reusing the same visual language as our registration status badges
@@ -23,7 +24,12 @@ const MyResults = () => {
   });
 
   if (isLoading) {
-    return <p className='text-text-muted'>Loading your results...</p>;
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton />
+        <TableSkeleton columns={5} rows={5} withTitle />
+      </div>
+    );
   }
 
   if (isError) {

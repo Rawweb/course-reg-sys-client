@@ -6,6 +6,7 @@ import {
   createRegistration,
   getMyRegistrations,
 } from '../../api/registrationApi';
+import Skeleton, { PageHeaderSkeleton, TableSkeleton } from '../../components/Skeleton';
 
 const AvailableCourses = () => {
   // Tracks whether the carryover toggle is on
@@ -42,6 +43,7 @@ const AvailableCourses = () => {
   useEffect(() => {
     if (latestRegistration) {
       const existingIds = latestRegistration.courses.map((item) => item.course._id);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedIds(new Set(existingIds));
     }
   }, [latestRegistration]);
@@ -82,7 +84,19 @@ const AvailableCourses = () => {
   };
 
   if (isLoading) {
-    return <p className='text-text-muted'>Loading available courses...</p>;
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton />
+        <TableSkeleton columns={5} rows={5} withTitle />
+        <div className='card flex items-center justify-between sticky bottom-4'>
+          <div className='space-y-2'>
+            <Skeleton className='h-4 w-32' />
+            <Skeleton className='h-6 w-28' />
+          </div>
+          <Skeleton className='h-10 w-48 rounded-lg' />
+        </div>
+      </div>
+    );
   }
 
   if (isError) {

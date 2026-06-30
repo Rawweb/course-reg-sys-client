@@ -9,6 +9,7 @@ import {
   deactivateDepartment,
 } from '../../api/departmentApi';
 import ConfirmModal from '../../components/ConfirmModal';
+import { PageHeaderSkeleton, TableSkeleton } from '../../components/Skeleton';
 
 const AdminDepartments = () => {
   const queryClient = useQueryClient();
@@ -72,7 +73,14 @@ const AdminDepartments = () => {
     }
   };
 
-  if (isLoading) return <p className='text-text-muted'>Loading departments...</p>;
+  if (isLoading) {
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton withAction />
+        <TableSkeleton columns={5} rows={5} />
+      </div>
+    );
+  }
   if (isError) return <p className='text-danger'>Failed to load departments.</p>;
 
   return (

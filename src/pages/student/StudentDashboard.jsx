@@ -14,6 +14,7 @@ import { getMyRegistrations } from '../../api/registrationApi';
 import { getDepartments } from '../../api/departmentApi';
 import { useAuth } from '../../context/AuthContext';
 import CircularProgress from '../../components/CircularProgress';
+import Skeleton from '../../components/Skeleton';
 
 const statusBadgeMap = {
   pending: 'badge-pending',
@@ -30,7 +31,7 @@ const StudentDashboard = () => {
     queryFn: getMyRegistrations,
   });
 
-  const { data: departments } = useQuery({
+  const { data: departments, isLoading: deptLoading } = useQuery({
     queryKey: ['departments'],
     queryFn: getDepartments,
   });
@@ -132,7 +133,17 @@ const StudentDashboard = () => {
           <div className='card mt-3'>
             <h2 className='font-semibold text-text-heading mb-3'>Current Registration</h2>
             {regLoading ? (
-              <p className='text-text-muted text-sm'>Loading...</p>
+              <div className='space-y-3'>
+                <div className='flex items-center justify-between'>
+                  <Skeleton className='h-4 w-36' />
+                  <Skeleton className='h-7 w-20 rounded-full' />
+                </div>
+                <div className='flex flex-wrap gap-2'>
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Skeleton key={index} className='h-7 w-16 rounded-full' />
+                  ))}
+                </div>
+              </div>
             ) : latestRegistration ? (
               <>
                 <div className='flex items-center justify-between mb-3'>
@@ -164,12 +175,25 @@ const StudentDashboard = () => {
         {/* Unit load summary — the standout visual piece */}
         <div className='card flex flex-col items-center'>
           <h2 className='font-semibold text-text-heading mb-4 self-start'>Unit Load Summary</h2>
-          <CircularProgress value={registeredUnits} max={maxUnits} label='Units' />
-          <div className='w-full mt-4 space-y-2 text-sm'>
-            <LegendRow color='bg-primary' label='Registered Units' value={registeredUnits} />
-            <LegendRow color='bg-secondary' label='Remaining Units' value={remainingUnits} />
-            <LegendRow color='bg-text-muted' label='Maximum Allowed' value={maxUnits} />
-          </div>
+          {regLoading || deptLoading ? (
+            <>
+              <Skeleton className='h-36 w-36 rounded-full' />
+              <div className='w-full mt-4 space-y-3'>
+                <Skeleton className='h-4 w-full' />
+                <Skeleton className='h-4 w-11/12' />
+                <Skeleton className='h-4 w-10/12' />
+              </div>
+            </>
+          ) : (
+            <>
+              <CircularProgress value={registeredUnits} max={maxUnits} label='Units' />
+              <div className='w-full mt-4 space-y-2 text-sm'>
+                <LegendRow color='bg-primary' label='Registered Units' value={registeredUnits} />
+                <LegendRow color='bg-secondary' label='Remaining Units' value={remainingUnits} />
+                <LegendRow color='bg-text-muted' label='Maximum Allowed' value={maxUnits} />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

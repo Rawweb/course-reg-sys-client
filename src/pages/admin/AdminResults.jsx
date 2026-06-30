@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { addBulkResults, getGradeableCourses } from '../../api/resultApi';
 import { getUsers } from '../../api/userApi';
+import Skeleton from '../../components/Skeleton';
 
 const GRADES = ['A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -135,7 +136,28 @@ const AdminResults = () => {
           </p>
 
           {gradeableLoading ? (
-            <p className='text-text-muted text-sm'>Loading...</p>
+            <div className='space-y-3'>
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div
+                  key={index}
+                  className='grid grid-cols-12 gap-3 items-center border-b border-border pb-3 last:border-0 last:pb-0'
+                >
+                  <div className='col-span-1'>
+                    <Skeleton className='h-4 w-4 rounded' />
+                  </div>
+                  <div className='col-span-5 space-y-2'>
+                    <Skeleton className='h-4 w-48' />
+                    <Skeleton className='h-3 w-40' />
+                  </div>
+                  <div className='col-span-3'>
+                    <Skeleton className='h-9 w-full rounded-lg' />
+                  </div>
+                  <div className='col-span-3'>
+                    <Skeleton className='h-9 w-full rounded-lg' />
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : gradeableCourses?.length === 0 ? (
             <p className='text-text-muted text-sm'>
               No gradeable courses found — this student may have no approved registration, or

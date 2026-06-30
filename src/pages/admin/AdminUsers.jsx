@@ -5,6 +5,7 @@ import { ArrowUpCircle, ToggleLeft, ToggleRight } from 'lucide-react';
 import { getUsers, toggleUserStatus, promoteStudent, bulkPromoteStudents } from '../../api/userApi';
 import { getDepartments } from '../../api/departmentApi';
 import ConfirmModal from '../../components/ConfirmModal';
+import Skeleton, { PageHeaderSkeleton, TableSkeleton } from '../../components/Skeleton';
 
 const ROLES = ['student', 'lecturer', 'admin'];
 const LEVELS = [100, 200, 300, 400, 500];
@@ -65,7 +66,15 @@ const AdminUsers = () => {
     onError: (error) => toast.error(error.response?.data?.message || 'Bulk promotion failed'),
   });
 
-  if (isLoading) return <p className='text-text-muted'>Loading users...</p>;
+  if (isLoading) {
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton withAction />
+        <Skeleton className='h-10 w-32 rounded-lg' />
+        <TableSkeleton columns={7} rows={6} />
+      </div>
+    );
+  }
   if (isError) return <p className='text-danger'>Failed to load users.</p>;
 
   return (

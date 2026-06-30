@@ -1,146 +1,192 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Mail, Hash, GraduationCap, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { changePassword } from '../../api/authApi';
 import { useAuth } from '../../context/AuthContext';
 
-const schema = z
-  .object({
-    currentPassword: z.string().min(1, 'Current password is required'),
-    newPassword: z.string().min(6, 'New password must be at least 6 characters'),
-    confirmPassword: z.string().min(1, 'Please confirm your new password'),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+function PasswordField({ label, value, onChange, placeholder, error }) {
+  const [visible, setVisible] = useState(false);
 
-const ProfileSettings = () => {
+  return (
+    <div className='space-y-1.5'>
+      <label className='block text-sm font-medium text-slate-600'>{label}</label>
+      <div className='relative'>
+        <input
+          type={visible ? 'text' : 'password'}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`w-full rounded-lg border bg-white px-3 py-2.5 pr-10 text-slate-900 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 ${
+            error ? 'border-danger' : 'border-slate-300'
+          }`}
+        />
+        <button
+          type='button'
+          onClick={() => setVisible((v) => !v)}
+          className='absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600'
+          aria-label={visible ? 'Hide password' : 'Show password'}
+        >
+          {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
+      {error && <p className='text-danger text-xs'>{error}</p>}
+    </div>
+  );
+}
+
+const DetailRow = ({ icon: Icon, label, value }) => (
+  <div className='flex items-center gap-3'>
+    <Icon size={16} className='text-slate-400' />
+    <div>
+      <dt className='text-xs text-slate-400'>{label}</dt>
+      <dd className='text-sm text-slate-700'>{value || '-'}</dd>
+    </div>
+  </div>
+);
+
+export default function ProfileSettings() {
   const { user } = useAuth();
-  const [showCurrent, setShowCurrent] = useState(false);
-  const [showNew, setShowNew] = useState(false);
+  const [formValues, setFormValues] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({ resolver: zodResolver(schema) });
+  const fullName = user?.fullName || 'User';
+  const displayRole = user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User';
+  const firstInitial = fullName.charAt(0).toUpperCase();
+  const departmentName = user?.department?.name || user?.department?.code;
 
-  const onSubmit = async (formData) => {
+  const handleChange = (field, value) => {
+    setFormValues((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
+
+  const validate = () => {
+    const nextErrors = {};
+
+    if (!formValues.currentPassword) {
+      nextErrors.currentPassword = 'Current password is required';
+    }
+
+    if (formValues.newPassword.length < 6) {
+      nextErrors.newPassword = 'New password must be at least 6 characters';
+    }
+
+    if (formValues.newPassword !== formValues.confirmPassword) {
+      nextErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validate()) return;
+
     try {
-      const response = await changePassword(formData);
+      setIsSubmitting(true);
+      const response = await changePassword({
+        currentPassword: formValues.currentPassword,
+        newPassword: formValues.newPassword,
+      });
       toast.success(response.message || 'Password changed successfully');
-      reset();
+      setFormValues({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to change password');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className='space-y-6 max-w-lg'>
-      <h1 className='text-2xl font-bold text-text-heading'>Profile Settings</h1>
+    <div className='w-full max-w-full overflow-x-hidden'>
+      <div className='mx-auto w-full max-w-4xl'>
+        <h1 className='text-2xl font-bold text-slate-900'>Profile Settings</h1>
+        <p className='mt-1 text-sm text-slate-500'>Manage your account details and password.</p>
 
-      {/* Read-only account info */}
-      <div className='card'>
-        <h2 className='font-semibold text-text-heading mb-3'>Account Information</h2>
-        <div className='space-y-2 text-sm'>
-          <div className='flex justify-between'>
-            <span className='text-text-muted'>Full Name</span>
-            <span className='text-text-heading font-medium'>{user?.fullName}</span>
-          </div>
-          <div className='flex justify-between'>
-            <span className='text-text-muted'>Email</span>
-            <span className='text-text-heading font-medium'>{user?.email}</span>
-          </div>
-          <div className='flex justify-between'>
-            <span className='text-text-muted'>Role</span>
-            <span className='text-text-heading font-medium capitalize'>{user?.role}</span>
-          </div>
-          {user?.role === 'student' && (
-            <div className='flex justify-between'>
-              <span className='text-text-muted'>Matric Number</span>
-              <span className='text-text-heading font-medium'>
-                {user?.studentInfo?.matricNumber}
-              </span>
+        <div className='mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[325px_minmax(0,560px)]'>
+          <aside>
+            <div className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm'>
+              <div className='flex flex-col items-center text-center'>
+                <div className='flex h-20 w-20 items-center justify-center rounded-full bg-teal-600 text-2xl font-semibold text-white'>
+                  {firstInitial}
+                </div>
+                <h2 className='mt-4 text-lg font-semibold text-slate-900'>{fullName}</h2>
+                <span className='mt-1 inline-flex items-center rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-medium text-teal-700'>
+                  {displayRole}
+                </span>
+              </div>
+
+              <dl className='mt-6 space-y-4 border-t border-slate-100 pt-6'>
+                <DetailRow icon={Mail} label='Email' value={user?.email} />
+                {user?.role === 'student' && (
+                  <DetailRow
+                    icon={Hash}
+                    label='Matric Number'
+                    value={user?.studentInfo?.matricNumber}
+                  />
+                )}
+                {departmentName && (
+                  <DetailRow icon={Building2} label='Department' value={departmentName} />
+                )}
+                <DetailRow icon={GraduationCap} label='Role' value={displayRole} />
+              </dl>
             </div>
-          )}
+          </aside>
+
+          <section className='space-y-6'>
+            <form
+              onSubmit={handleSubmit}
+              className='w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6'
+            >
+              <h3 className='text-base font-semibold text-slate-900'>Change Password</h3>
+              <p className='mt-1 text-sm text-slate-500'>
+                Use a strong password you don&apos;t use anywhere else.
+              </p>
+
+              <div className='mt-6 w-full space-y-5'>
+                <PasswordField
+                  label='Current Password'
+                  value={formValues.currentPassword}
+                  onChange={(e) => handleChange('currentPassword', e.target.value)}
+                  placeholder='Enter current password'
+                  error={errors.currentPassword}
+                />
+                <PasswordField
+                  label='New Password'
+                  value={formValues.newPassword}
+                  onChange={(e) => handleChange('newPassword', e.target.value)}
+                  placeholder='Enter new password'
+                  error={errors.newPassword}
+                />
+                <PasswordField
+                  label='Confirm New Password'
+                  value={formValues.confirmPassword}
+                  onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                  placeholder='Re-enter new password'
+                  error={errors.confirmPassword}
+                />
+
+                <button
+                  type='submit'
+                  disabled={isSubmitting}
+                  className='rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-teal-200'
+                >
+                  {isSubmitting ? 'Updating...' : 'Update Password'}
+                </button>
+              </div>
+            </form>
+          </section>
         </div>
-      </div>
-
-      {/* Change password form */}
-      <div className='card'>
-        <h2 className='font-semibold text-text-heading mb-4'>Change Password</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-          <div>
-            <label className='block text-sm font-medium text-text mb-1.5'>Current Password</label>
-            <div className='relative'>
-              <input
-                type={showCurrent ? 'text' : 'password'}
-                {...register('currentPassword')}
-                className={`w-full px-4 py-2.5 pr-11 rounded-lg border text-sm outline-none focus:ring-2 focus:ring-primary
-                  ${errors.currentPassword ? 'border-danger' : 'border-border'}`}
-              />
-              <button
-                type='button'
-                onClick={() => setShowCurrent(!showCurrent)}
-                className='absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text'
-              >
-                {showCurrent ? <EyeOff size={17} /> : <Eye size={17} />}
-              </button>
-            </div>
-            {errors.currentPassword && (
-              <p className='text-danger text-xs mt-1.5'>{errors.currentPassword.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className='block text-sm font-medium text-text mb-1.5'>New Password</label>
-            <div className='relative'>
-              <input
-                type={showNew ? 'text' : 'password'}
-                {...register('newPassword')}
-                className={`w-full px-4 py-2.5 pr-11 rounded-lg border text-sm outline-none focus:ring-2 focus:ring-primary
-                  ${errors.newPassword ? 'border-danger' : 'border-border'}`}
-              />
-              <button
-                type='button'
-                onClick={() => setShowNew(!showNew)}
-                className='absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text'
-              >
-                {showNew ? <EyeOff size={17} /> : <Eye size={17} />}
-              </button>
-            </div>
-            {errors.newPassword && (
-              <p className='text-danger text-xs mt-1.5'>{errors.newPassword.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className='block text-sm font-medium text-text mb-1.5'>
-              Confirm New Password
-            </label>
-            <input
-              type='password'
-              {...register('confirmPassword')}
-              className={`w-full px-4 py-2.5 rounded-lg border text-sm outline-none focus:ring-2 focus:ring-primary
-                ${errors.confirmPassword ? 'border-danger' : 'border-border'}`}
-            />
-            {errors.confirmPassword && (
-              <p className='text-danger text-xs mt-1.5'>{errors.confirmPassword.message}</p>
-            )}
-          </div>
-
-          <button type='submit' disabled={isSubmitting} className='btn w-auto px-6'>
-            {isSubmitting ? 'Updating...' : 'Update Password'}
-          </button>
-        </form>
       </div>
     </div>
   );
-};
-
-export default ProfileSettings;
+}

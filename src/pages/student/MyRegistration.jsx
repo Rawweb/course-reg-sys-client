@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { getMyRegistrations, submitRegistration } from '../../api/registrationApi';
+import Skeleton, { PageHeaderSkeleton, TableSkeleton } from '../../components/Skeleton';
 
 // Maps each status to the matching badge class we defined in index.css
 const statusBadgeMap = {
@@ -32,7 +33,22 @@ const MyRegistration = () => {
   });
 
   if (isLoading) {
-    return <p className='text-text-muted'>Loading your registration...</p>;
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton />
+        <div className='card'>
+          <div className='flex items-center justify-between mb-4'>
+            <div className='space-y-2'>
+              <Skeleton className='h-4 w-36' />
+              <Skeleton className='h-6 w-32' />
+            </div>
+            <Skeleton className='h-7 w-20 rounded-full' />
+          </div>
+          <Skeleton className='h-10 w-full rounded-lg' />
+        </div>
+        <TableSkeleton columns={3} rows={4} withTitle />
+      </div>
+    );
   }
 
   if (isError) {
