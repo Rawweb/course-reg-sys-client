@@ -96,23 +96,21 @@ const PendingRegistrations = () => {
               </div>
 
               {/* Courses */}
-              <Table headers={['Code', 'Title', 'Units', 'Type']}>
+              <Table headers={['Code', 'Title', 'Units']}>
                 {reg.courses.map((c) => (
                   <tr key={c.courseCode}>
-                    <td className='whitespace-nowrap px-4 py-3 font-medium text-text-heading'>
-                      {c.courseCode}
+                    <td className='whitespace-nowrap px-4 py-3'>
+                      <div className='flex items-center gap-2'>
+                        <span className='font-medium text-text-heading'>{c.courseCode}</span>
+                        {c.isCarryover && (
+                          <span className='rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700'>
+                            Carryover
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className='px-4 py-3 text-text'>{c.title}</td>
                     <td className='px-4 py-3 text-text'>{c.unit}</td>
-                    <td className='px-4 py-3'>
-                      {c.isCarryover ? (
-                        <span className='rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700'>
-                          Carryover
-                        </span>
-                      ) : (
-                        <span className='text-text-muted'>—</span>
-                      )}
-                    </td>
                   </tr>
                 ))}
               </Table>
