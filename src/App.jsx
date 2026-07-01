@@ -17,6 +17,7 @@ import AvailableCourses from './pages/student/AvailableCourses';
 import MyRegistration from './pages/student/MyRegistration';
 import MyResults from './pages/student/MyResults';
 import ProfileSettings from './pages/auth/ProfileSettings';
+import PendingRegistrations from './pages/lecturer/PendingRegistrations';
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
         }
       >
         <Route path='/lecturer/dashboard' element={<LecturerDashboard />} />
+        <Route path='/lecturer/registrations' element={<PendingRegistrations />} />
         <Route path='/lecturer/profile' element={<ProfileSettings />} />
       </Route>
 
