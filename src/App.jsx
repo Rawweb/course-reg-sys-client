@@ -16,6 +16,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AvailableCourses from './pages/student/AvailableCourses';
 import MyRegistration from './pages/student/MyRegistration';
 import MyResults from './pages/student/MyResults';
+import ProfileSettings from './pages/auth/ProfileSettings';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path='/student/courses' element={<AvailableCourses />} />
         <Route path='/student/registration' element={<MyRegistration />} />
         <Route path='/student/results' element={<MyResults />} />
+        <Route path='/student/profile' element={<ProfileSettings />} />
       </Route>
 
       {/* LECTURER */}
@@ -58,6 +60,7 @@ function App() {
         }
       >
         <Route path='/lecturer/dashboard' element={<LecturerDashboard />} />
+        <Route path='/lecturer/profile' element={<ProfileSettings />} />
       </Route>
 
       {/* ADMIN */}
@@ -71,6 +74,7 @@ function App() {
         }
       >
         <Route path='/admin/dashboard' element={<AdminDashboard />} />
+        <Route path='/admin/profile' element={<ProfileSettings />} />
       </Route>
 
       <Route path='*' element={<Navigate to='/login' replace />} />
