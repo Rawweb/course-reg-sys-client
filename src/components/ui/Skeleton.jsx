@@ -12,3 +12,19 @@ export const FullPageSkeleton = () => (
     </div>
   </div>
 );
+
+// A skeleton shaped like a StatCard, shown while dashboard data loads.
+export const SkeletonStatCard = () => (
+  <div className="card flex items-center justify-between">
+    <div className="space-y-2">
+      <SkeletonBlock className="h-3 w-20" />
+      <SkeletonBlock className="h-6 w-16" />
+    </div>
+    <SkeletonBlock className="h-12 w-12 rounded-full" />
+  </div>
+);
+
+// A generic skeleton line, for text placeholders.
+export const SkeletonLine = ({ className = "" }) => (
+  <SkeletonBlock className={`h-4 ${className}`} />
+);
