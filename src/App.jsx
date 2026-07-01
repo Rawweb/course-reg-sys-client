@@ -13,6 +13,7 @@ import AdminLayout from './components/layouts/AdminLayout';
 import StudentDashboard from './pages/student/StudentDashboard';
 import LecturerDashboard from './pages/lecturer/LecturerDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AvailableCourses from './pages/student/AvailableCourses';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         }
       >
         <Route path='/student/dashboard' element={<StudentDashboard />} />
+        <Route path='/student/courses' element={<AvailableCourses />} />
       </Route>
 
       {/* LECTURER */}
