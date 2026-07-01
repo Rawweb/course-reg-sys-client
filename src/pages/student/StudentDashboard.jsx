@@ -1,5 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { GraduationCap, Building2, ClipboardList, Layers } from 'lucide-react';
+import {
+  GraduationCap,
+  Building2,
+  ClipboardList,
+  Layers,
+  CheckCircle2,
+  XCircle,
+  Clock,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getMyRegistrations } from '../../api/courseApi';
@@ -87,24 +95,72 @@ const StudentDashboard = () => {
         ) : isError ? (
           <p className='text-sm text-danger'>Couldn't load your registration.</p>
         ) : currentReg ? (
-          <div className='space-y-2 text-sm text-text'>
-            <div className='flex items-center gap-2'>
-              <span className='text-text-muted'>Status:</span>
-              <Badge status={currentReg.status} />
+          <div>
+            {/* Status banner — color-coded, with an icon */}
+            <div
+              className={`flex items-center gap-3 rounded-lg p-4 ${
+                currentReg.status === 'approved'
+                  ? 'bg-green-50'
+                  : currentReg.status === 'rejected'
+                    ? 'bg-red-50'
+                    : 'bg-amber-50'
+              }`}
+            >
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                  currentReg.status === 'approved'
+                    ? 'bg-green-100 text-success'
+                    : currentReg.status === 'rejected'
+                      ? 'bg-red-100 text-danger'
+                      : 'bg-amber-100 text-warning'
+                }`}
+              >
+                {currentReg.status === 'approved' ? (
+                  <CheckCircle2 size={20} />
+                ) : currentReg.status === 'rejected' ? (
+                  <XCircle size={20} />
+                ) : (
+                  <Clock size={20} />
+                )}
+              </div>
+              <div>
+                <p className='text-sm font-semibold text-text-heading capitalize'>
+                  {currentReg.status}
+                </p>
+                <p className='text-xs text-text-muted'>
+                  {currentReg.status === 'approved'
+                    ? 'Your registration has been approved.'
+                    : currentReg.status === 'rejected'
+                      ? 'Your registration needs changes.'
+                      : "Awaiting your adviser's review."}
+                </p>
+              </div>
             </div>
-            <p>
-              <span className='text-text-muted'>Semester:</span> {currentReg.semester}
-            </p>
-            <p>
-              <span className='text-text-muted'>Courses:</span> {currentReg.courses.length}
-            </p>
-            <p>
-              <span className='text-text-muted'>Total Units:</span> {currentReg.totalUnits}
-            </p>
+
+            {/* Key numbers as pills */}
+            <div className='mt-4 grid grid-cols-3 gap-3'>
+              <div className='rounded-lg border border-border bg-slate-50 p-3 text-center'>
+                <p className='text-lg font-bold text-text-heading'>{currentReg.semester}</p>
+                <p className='text-[11px] uppercase tracking-wide text-text-muted'>Semester</p>
+              </div>
+              <div className='rounded-lg border border-border bg-slate-50 p-3 text-center'>
+                <p className='text-lg font-bold text-text-heading'>{currentReg.courses.length}</p>
+                <p className='text-[11px] uppercase tracking-wide text-text-muted'>Courses</p>
+              </div>
+              <div className='rounded-lg border border-border bg-slate-50 p-3 text-center'>
+                <p className='text-lg font-bold text-text-heading'>{currentReg.totalUnits}</p>
+                <p className='text-[11px] uppercase tracking-wide text-text-muted'>Units</p>
+              </div>
+            </div>
+
+            {/* Rejection feedback, if any */}
             {currentReg.status === 'rejected' && currentReg.feedback && (
-              <p className='rounded-lg bg-red-50 p-3 text-danger'>
-                <span className='font-medium'>Feedback:</span> {currentReg.feedback}
-              </p>
+              <div className='mt-4 rounded-lg border-l-4 border-danger bg-red-50 p-3'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-danger'>
+                  Adviser Feedback
+                </p>
+                <p className='mt-1 text-sm text-text'>{currentReg.feedback}</p>
+              </div>
             )}
           </div>
         ) : (
