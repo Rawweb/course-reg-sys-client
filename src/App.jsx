@@ -18,6 +18,7 @@ import MyRegistration from './pages/student/MyRegistration';
 import MyResults from './pages/student/MyResults';
 import ProfileSettings from './pages/auth/ProfileSettings';
 import PendingRegistrations from './pages/lecturer/PendingRegistrations';
+import Reports from './pages/admin/Reports';
 
 function App() {
   return (
@@ -76,6 +77,7 @@ function App() {
         }
       >
         <Route path='/admin/dashboard' element={<AdminDashboard />} />
+        <Route path='/admin/reports' element={<Reports />} />
         <Route path='/admin/profile' element={<ProfileSettings />} />
       </Route>
 
