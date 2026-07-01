@@ -11,5 +11,9 @@ export const UNIT_RULES = {
   MIN: 15,
   MAX_NORMAL: 24,
   MAX_CARRYOVER: 30,
-  EXEMPT_LEVEL: 400
+  EXEMPT_LEVEL: 400,
 };
+
+// Helper function to determine the CSS class for a given grade.
+export const gradeClass = (grade) =>
+  grade === 'F' ? 'bg-red-100 text-danger' : 'bg-green-100 text-success';

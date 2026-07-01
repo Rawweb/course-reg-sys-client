@@ -15,6 +15,7 @@ import LecturerDashboard from './pages/lecturer/LecturerDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AvailableCourses from './pages/student/AvailableCourses';
 import MyRegistration from './pages/student/MyRegistration';
+import MyResults from './pages/student/MyResults';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
         <Route path='/student/dashboard' element={<StudentDashboard />} />
         <Route path='/student/courses' element={<AvailableCourses />} />
         <Route path='/student/registration' element={<MyRegistration />} />
+        <Route path='/student/results' element={<MyResults />} />
       </Route>
 
       {/* LECTURER */}
