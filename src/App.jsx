@@ -1,6 +1,18 @@
+// src/App.jsx
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PublicRoute from './components/router/PublicRoute';
+import ProtectedRoute from './components/router/ProtectedRoute';
+import RoleRoute from './components/router/RoleRoute';
+
 import Login from './pages/auth/Login';
+
+import StudentLayout from './components/layouts/StudentLayout';
+import LecturerLayout from './components/layouts/LecturerLayout';
+import AdminLayout from './components/layouts/AdminLayout';
+
+import StudentDashboard from './pages/student/StudentDashboard';
+import LecturerDashboard from './pages/lecturer/LecturerDashboard';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function App() {
   return (
@@ -15,6 +27,45 @@ function App() {
           </PublicRoute>
         }
       />
+
+      {/* STUDENT */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole='student'>
+              <StudentLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      >
+        <Route path='/student/dashboard' element={<StudentDashboard />} />
+      </Route>
+
+      {/* LECTURER */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole='lecturer'>
+              <LecturerLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      >
+        <Route path='/lecturer/dashboard' element={<LecturerDashboard />} />
+      </Route>
+
+      {/* ADMIN */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole='admin'>
+              <AdminLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      >
+        <Route path='/admin/dashboard' element={<AdminDashboard />} />
+      </Route>
 
       <Route path='*' element={<Navigate to='/login' replace />} />
     </Routes>
